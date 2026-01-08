@@ -49,6 +49,18 @@ declare module "auth/ProtectedRoute" {
   }>;
 }
 
+declare module "search/SearchApp" {
+  export const SearchApp: React.ComponentType;
+}
+
+declare module "wishlist/WishlistApp" {
+  export const WishlistApp: React.ComponentType;
+}
+
+declare module "orders/OrdersApp" {
+  export const OrdersApp: React.ComponentType;
+}
+
 declare module "ui/Button" {
   const Button: React.ComponentType<any>;
   export default Button;

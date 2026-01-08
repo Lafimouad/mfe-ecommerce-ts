@@ -39,7 +39,10 @@ module.exports = {
         cart: "cart@http://localhost:3002/remoteEntry.js",
         checkout: "checkout@http://localhost:3003/remoteEntry.js",
         auth: "auth@http://localhost:3004/remoteEntry.js",
-        ui: "ui@http://localhost:3005/remoteEntry.js",
+        search: "search@http://localhost:3005/remoteEntry.js",
+        wishlist: "wishlist@http://localhost:3006/remoteEntry.js",
+        orders: "orders@http://localhost:3007/remoteEntry.js",
+        ui: "ui@http://localhost:3008/remoteEntry.js",
       },
       shared: {
         ...deps,
