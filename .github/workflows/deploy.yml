@@ -102,13 +102,15 @@ jobs:
           fi
 
       - name: Invalidate CloudFront cache
-        if: secrets.CLOUDFRONT_ENABLED == 'true'
         run: |
           DISTRIBUTION_ID=$(echo '${{ secrets.CLOUDFRONT_DISTRIBUTION_IDS }}' | jq -r '."${{ matrix.mfe.name }}"')
           if [ "$DISTRIBUTION_ID" != "null" ] && [ -n "$DISTRIBUTION_ID" ]; then
+            echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
             aws cloudfront create-invalidation \
               --distribution-id "$DISTRIBUTION_ID" \
               --paths "/*"
+          else
+            echo "No CloudFront distribution found for ${{ matrix.mfe.name }}, skipping invalidation"
           fi
 
       - name: Deployment status
