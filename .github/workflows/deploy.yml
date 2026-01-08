@@ -1,0 +1,117 @@
+name: Deploy MFE to AWS
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  NODE_VERSION: "18"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mfe:
+          - name: mfe-products
+            port: 3001
+          - name: mfe-cart
+            port: 3002
+          - name: mfe-checkout
+            port: 3003
+          - name: mfe-auth
+            port: 3004
+          - name: mfe-search
+            port: 3005
+          - name: mfe-wishlist
+            port: 3006
+          - name: mfe-orders
+            port: 3007
+          - name: mfe-ui
+            port: 3008
+          - name: mfe-store-host
+            port: 3000
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ${{ matrix.mfe.name }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.mfe.name }}
+        run: npm ci
+
+      - name: Build MFE
+        working-directory: ${{ matrix.mfe.name }}
+        run: npm run build
+        env:
+          NODE_ENV: production
+          # URLs will be injected from Terraform outputs
+          REACT_APP_MFE_HOST_URL: ${{ secrets.MFE_HOST_URL }}
+          REACT_APP_MFE_PRODUCTS_URL: ${{ secrets.MFE_PRODUCTS_URL }}
+          REACT_APP_MFE_CART_URL: ${{ secrets.MFE_CART_URL }}
+          REACT_APP_MFE_CHECKOUT_URL: ${{ secrets.MFE_CHECKOUT_URL }}
+          REACT_APP_MFE_AUTH_URL: ${{ secrets.MFE_AUTH_URL }}
+          REACT_APP_MFE_SEARCH_URL: ${{ secrets.MFE_SEARCH_URL }}
+          REACT_APP_MFE_WISHLIST_URL: ${{ secrets.MFE_WISHLIST_URL }}
+          REACT_APP_MFE_ORDERS_URL: ${{ secrets.MFE_ORDERS_URL }}
+          REACT_APP_MFE_UI_URL: ${{ secrets.MFE_UI_URL }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to S3
+        working-directory: ${{ matrix.mfe.name }}
+        run: |
+          BUCKET_NAME="${{ secrets.S3_BUCKET_PREFIX }}-${{ matrix.mfe.name }}-prod"
+
+          # Sync all files except index.html and remoteEntry.js with cache
+          aws s3 sync dist/ "s3://${BUCKET_NAME}" \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html" \
+            --exclude "remoteEntry.js"
+
+          # Upload index.html without cache
+          if [ -f "dist/index.html" ]; then
+            aws s3 cp dist/index.html "s3://${BUCKET_NAME}/index.html" \
+              --cache-control "no-cache, no-store, must-revalidate"
+          fi
+
+          # Upload remoteEntry.js without cache
+          if [ -f "dist/remoteEntry.js" ]; then
+            aws s3 cp dist/remoteEntry.js "s3://${BUCKET_NAME}/remoteEntry.js" \
+              --cache-control "no-cache, no-store, must-revalidate"
+          fi
+
+      - name: Invalidate CloudFront cache
+        if: ${{ secrets.CLOUDFRONT_ENABLED == 'true' }}
+        run: |
+          DISTRIBUTION_ID=$(echo '${{ secrets.CLOUDFRONT_DISTRIBUTION_IDS }}' | jq -r '."${{ matrix.mfe.name }}"')
+          if [ "$DISTRIBUTION_ID" != "null" ] && [ -n "$DISTRIBUTION_ID" ]; then
+            aws cloudfront create-invalidation \
+              --distribution-id "$DISTRIBUTION_ID" \
+              --paths "/*"
+          fi
+
+      - name: Deployment status
+        run: |
+          echo "✅ ${{ matrix.mfe.name }} deployed successfully!"
+          echo "📦 Bucket: ${{ secrets.S3_BUCKET_PREFIX }}-${{ matrix.mfe.name }}-prod"

@@ -3,15 +3,24 @@ const ModuleFederationPlugin =
   require("webpack").container.ModuleFederationPlugin;
 const deps = require("./package.json").dependencies || {};
 
+const isProduction = process.env.NODE_ENV === "production";
+
+// Get remote URLs from environment variables or use localhost
+const getRemoteUrl = (name, port) => {
+  const envVar = `REACT_APP_MFE_${name.toUpperCase()}_URL`;
+  return process.env[envVar] || `http://localhost:${port}`;
+};
+
 module.exports = {
   entry: "./src/index.tsx",
-  mode: "development",
+  mode: isProduction ? "production" : "development",
   devServer: {
     port: 3000,
     historyApiFallback: true,
   },
   output: {
     publicPath: "auto",
+    clean: true,
   },
   resolve: {
     extensions: [".tsx", ".ts", ".jsx", ".js"],
@@ -35,14 +44,14 @@ module.exports = {
       filename: "remoteEntry.js",
       exposes: {},
       remotes: {
-        products: "products@http://localhost:3001/remoteEntry.js",
-        cart: "cart@http://localhost:3002/remoteEntry.js",
-        checkout: "checkout@http://localhost:3003/remoteEntry.js",
-        auth: "auth@http://localhost:3004/remoteEntry.js",
-        search: "search@http://localhost:3005/remoteEntry.js",
-        wishlist: "wishlist@http://localhost:3006/remoteEntry.js",
-        orders: "orders@http://localhost:3007/remoteEntry.js",
-        ui: "ui@http://localhost:3008/remoteEntry.js",
+        products: `products@${getRemoteUrl("products", 3001)}/remoteEntry.js`,
+        cart: `cart@${getRemoteUrl("cart", 3002)}/remoteEntry.js`,
+        checkout: `checkout@${getRemoteUrl("checkout", 3003)}/remoteEntry.js`,
+        auth: `auth@${getRemoteUrl("auth", 3004)}/remoteEntry.js`,
+        search: `search@${getRemoteUrl("search", 3005)}/remoteEntry.js`,
+        wishlist: `wishlist@${getRemoteUrl("wishlist", 3006)}/remoteEntry.js`,
+        orders: `orders@${getRemoteUrl("orders", 3007)}/remoteEntry.js`,
+        ui: `ui@${getRemoteUrl("ui", 3008)}/remoteEntry.js`,
       },
       shared: {
         ...deps,
