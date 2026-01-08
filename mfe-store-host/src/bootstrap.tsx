@@ -68,7 +68,9 @@ const App = () => {
 
     // Listen for wishlist updates
     const handleWishlistUpdate = (e: any) => {
-      const items = JSON.parse(localStorage.getItem("mfe-wishlist-items") || "[]");
+      const items = JSON.parse(
+        localStorage.getItem("mfe-wishlist-items") || "[]"
+      );
       setWishlistCount(items.length);
     };
 
@@ -155,7 +157,10 @@ const App = () => {
             element={
               <div style={{ padding: 20 }}>
                 <h1>Welcome to Our Store</h1>
-                <p>Explore our products, manage your wishlist, and track your orders!</p>
+                <p>
+                  Explore our products, manage your wishlist, and track your
+                  orders!
+                </p>
               </div>
             }
           />

@@ -32,9 +32,7 @@ const mockOrders: Order[] = [
   {
     id: "ORD-2026-002",
     date: "2026-01-07T14:20:00Z",
-    items: [
-      { id: 3, title: "Laptop", price: 999, quantity: 1 },
-    ],
+    items: [{ id: 3, title: "Laptop", price: 999, quantity: 1 }],
     total: 999,
     status: "shipped",
     trackingNumber: "TRK987654321",
@@ -82,7 +80,8 @@ export const OrdersApp = () => {
     };
 
     window.addEventListener("mfe:order:created", handleNewOrder);
-    return () => window.removeEventListener("mfe:order:created", handleNewOrder);
+    return () =>
+      window.removeEventListener("mfe:order:created", handleNewOrder);
   }, []);
 
   const getStatusColor = (status: Order["status"]) => {
@@ -107,15 +106,14 @@ export const OrdersApp = () => {
     return icons[status];
   };
 
-  const filteredOrders = filterStatus === "all" 
-    ? orders 
-    : orders.filter((order) => order.status === filterStatus);
+  const filteredOrders =
+    filterStatus === "all"
+      ? orders
+      : orders.filter((order) => order.status === filterStatus);
 
   const reorder = (order: Order) => {
     order.items.forEach((item) => {
-      window.dispatchEvent(
-        new CustomEvent("mfe:add", { detail: item })
-      );
+      window.dispatchEvent(new CustomEvent("mfe:add", { detail: item }));
     });
     alert("Items added to cart!");
   };
@@ -125,8 +123,17 @@ export const OrdersApp = () => {
       <h2>My Orders</h2>
 
       {/* Filter */}
-      <div style={{ marginBottom: 20, display: "flex", gap: 12, flexWrap: "wrap" }}>
-        {["all", "pending", "processing", "shipped", "delivered", "cancelled"].map((status) => (
+      <div
+        style={{ marginBottom: 20, display: "flex", gap: 12, flexWrap: "wrap" }}
+      >
+        {[
+          "all",
+          "pending",
+          "processing",
+          "shipped",
+          "delivered",
+          "cancelled",
+        ].map((status) => (
           <button
             key={status}
             onClick={() => setFilterStatus(status)}
@@ -190,7 +197,9 @@ export const OrdersApp = () => {
                   }}
                 >
                   <span>{getStatusIcon(order.status)}</span>
-                  <span style={{ textTransform: "capitalize" }}>{order.status}</span>
+                  <span style={{ textTransform: "capitalize" }}>
+                    {order.status}
+                  </span>
                 </div>
               </div>
 
@@ -253,7 +262,11 @@ export const OrdersApp = () => {
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                   <button
-                    onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)}
+                    onClick={() =>
+                      setSelectedOrder(
+                        selectedOrder?.id === order.id ? null : order
+                      )
+                    }
                     style={{
                       padding: "8px 16px",
                       backgroundColor: "white",
@@ -263,7 +276,9 @@ export const OrdersApp = () => {
                       cursor: "pointer",
                     }}
                   >
-                    {selectedOrder?.id === order.id ? "Hide Details" : "View Details"}
+                    {selectedOrder?.id === order.id
+                      ? "Hide Details"
+                      : "View Details"}
                   </button>
                   {order.status === "delivered" && (
                     <button
@@ -295,8 +310,16 @@ export const OrdersApp = () => {
                   }}
                 >
                   <h4 style={{ marginTop: 0 }}>Order Timeline</h4>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 12,
+                    }}
+                  >
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 12 }}
+                    >
                       <div
                         style={{
                           width: 12,
@@ -305,10 +328,19 @@ export const OrdersApp = () => {
                           backgroundColor: "#28a745",
                         }}
                       />
-                      <span>Order Placed - {new Date(order.date).toLocaleDateString()}</span>
+                      <span>
+                        Order Placed -{" "}
+                        {new Date(order.date).toLocaleDateString()}
+                      </span>
                     </div>
                     {order.status !== "pending" && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 12,
+                        }}
+                      >
                         <div
                           style={{
                             width: 12,
@@ -320,8 +352,15 @@ export const OrdersApp = () => {
                         <span>Processing Started</span>
                       </div>
                     )}
-                    {(order.status === "shipped" || order.status === "delivered") && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    {(order.status === "shipped" ||
+                      order.status === "delivered") && (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 12,
+                        }}
+                      >
                         <div
                           style={{
                             width: 12,
@@ -334,7 +373,13 @@ export const OrdersApp = () => {
                       </div>
                     )}
                     {order.status === "delivered" && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 12,
+                        }}
+                      >
                         <div
                           style={{
                             width: 12,

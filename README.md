@@ -6,21 +6,22 @@ A modern e-commerce platform built with **React**, **TypeScript**, and **Module 
 
 This project consists of 8 independent micro-frontends:
 
-| MFE | Port | Description |
-|-----|------|-------------|
+| MFE                | Port | Description                                  |
+| ------------------ | ---- | -------------------------------------------- |
 | **mfe-store-host** | 3000 | Host application with navigation and routing |
-| **mfe-products** | 3001 | Product listing and catalog |
-| **mfe-cart** | 3002 | Shopping cart management |
-| **mfe-checkout** | 3003 | Checkout and payment flow |
-| **mfe-auth** | 3004 | Authentication (login/signup) |
-| **mfe-search** | 3005 | Advanced product search with filters |
-| **mfe-wishlist** | 3006 | Save products for later |
-| **mfe-orders** | 3007 | Order history and tracking |
-| **mfe-ui** | 3008 | Shared UI components |
+| **mfe-products**   | 3001 | Product listing and catalog                  |
+| **mfe-cart**       | 3002 | Shopping cart management                     |
+| **mfe-checkout**   | 3003 | Checkout and payment flow                    |
+| **mfe-auth**       | 3004 | Authentication (login/signup)                |
+| **mfe-search**     | 3005 | Advanced product search with filters         |
+| **mfe-wishlist**   | 3006 | Save products for later                      |
+| **mfe-orders**     | 3007 | Order history and tracking                   |
+| **mfe-ui**         | 3008 | Shared UI components                         |
 
 ## ✨ Features
 
 ### 🔍 Search (NEW)
+
 - Advanced product search
 - Category filters
 - Price range sliders
@@ -28,12 +29,14 @@ This project consists of 8 independent micro-frontends:
 - Real-time filtering
 
 ### ❤️ Wishlist (NEW)
+
 - Save products for later
 - Move items to cart
 - Persistent storage
 - Badge counter in navigation
 
 ### 📦 Orders (NEW)
+
 - Order history
 - Order status tracking (pending, processing, shipped, delivered)
 - Order details with timeline
@@ -41,11 +44,13 @@ This project consists of 8 independent micro-frontends:
 - Mock order data with tracking numbers
 
 ### 🛍️ Products
+
 - Product catalog
 - Add to cart functionality
 - Custom events for cross-MFE communication
 
 ### 🛒 Cart
+
 - Add/remove items
 - Quantity adjustment
 - Real-time total calculation
@@ -53,10 +58,12 @@ This project consists of 8 independent micro-frontends:
 - Clear cart functionality
 
 ### 💳 Checkout
+
 - Simple checkout flow
 - Protected route (requires auth)
 
 ### 🔐 Authentication
+
 - Login/Signup forms
 - User profile
 - Session management
@@ -65,6 +72,7 @@ This project consists of 8 independent micro-frontends:
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js (v16+)
 - npm or yarn
 
@@ -106,46 +114,55 @@ cd mfe-ui && npm install && cd ..
 You need to run all micro-frontends simultaneously. Open 9 terminal windows/tabs:
 
 **Terminal 1 - Host:**
+
 ```bash
 cd mfe-store-host && npm start
 ```
 
 **Terminal 2 - Products:**
+
 ```bash
 cd mfe-products && npm start
 ```
 
 **Terminal 3 - Cart:**
+
 ```bash
 cd mfe-cart && npm start
 ```
 
 **Terminal 4 - Checkout:**
+
 ```bash
 cd mfe-checkout && npm start
 ```
 
 **Terminal 5 - Auth:**
+
 ```bash
 cd mfe-auth && npm start
 ```
 
 **Terminal 6 - Search:**
+
 ```bash
 cd mfe-search && npm start
 ```
 
 **Terminal 7 - Wishlist:**
+
 ```bash
 cd mfe-wishlist && npm start
 ```
 
 **Terminal 8 - Orders:**
+
 ```bash
 cd mfe-orders && npm start
 ```
 
 **Terminal 9 - UI:**
+
 ```bash
 cd mfe-ui && npm start
 ```
@@ -153,6 +170,7 @@ cd mfe-ui && npm start
 ### Access the Application
 
 Open your browser and navigate to:
+
 ```
 http://localhost:3000
 ```
@@ -161,13 +179,13 @@ http://localhost:3000
 
 The application uses **Custom Events** for communication between micro-frontends:
 
-| Event | Direction | Purpose |
-|-------|-----------|---------|
-| `mfe:add` | Products/Search → Cart | Add item to cart |
-| `mfe:cart:update` | Cart → Host | Update cart count badge |
-| `mfe:wishlist:add` | Search → Wishlist | Add item to wishlist |
-| `mfe:wishlist:update` | Wishlist → Host | Update wishlist count badge |
-| `mfe:order:created` | Checkout → Orders | Create new order |
+| Event                 | Direction              | Purpose                     |
+| --------------------- | ---------------------- | --------------------------- |
+| `mfe:add`             | Products/Search → Cart | Add item to cart            |
+| `mfe:cart:update`     | Cart → Host            | Update cart count badge     |
+| `mfe:wishlist:add`    | Search → Wishlist      | Add item to wishlist        |
+| `mfe:wishlist:update` | Wishlist → Host        | Update wishlist count badge |
+| `mfe:order:created`   | Checkout → Orders      | Create new order            |
 
 ## 💾 Data Persistence
 

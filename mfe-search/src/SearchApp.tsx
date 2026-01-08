@@ -9,14 +9,62 @@ interface Product {
 }
 
 const allProducts: Product[] = [
-  { id: 1, title: "Scooter", price: 299, category: "Vehicles", description: "Electric scooter with long battery life" },
-  { id: 2, title: "Headphones", price: 199, category: "Electronics", description: "Wireless noise-canceling headphones" },
-  { id: 3, title: "Laptop", price: 999, category: "Electronics", description: "High-performance laptop for work and gaming" },
-  { id: 4, title: "Smartphone", price: 699, category: "Electronics", description: "Latest model with advanced camera" },
-  { id: 5, title: "Bicycle", price: 399, category: "Vehicles", description: "Mountain bike with 21-speed gears" },
-  { id: 6, title: "Camera", price: 549, category: "Electronics", description: "Professional DSLR camera" },
-  { id: 7, title: "Watch", price: 249, category: "Accessories", description: "Smartwatch with fitness tracking" },
-  { id: 8, title: "Keyboard", price: 89, category: "Electronics", description: "Mechanical keyboard with RGB lighting" },
+  {
+    id: 1,
+    title: "Scooter",
+    price: 299,
+    category: "Vehicles",
+    description: "Electric scooter with long battery life",
+  },
+  {
+    id: 2,
+    title: "Headphones",
+    price: 199,
+    category: "Electronics",
+    description: "Wireless noise-canceling headphones",
+  },
+  {
+    id: 3,
+    title: "Laptop",
+    price: 999,
+    category: "Electronics",
+    description: "High-performance laptop for work and gaming",
+  },
+  {
+    id: 4,
+    title: "Smartphone",
+    price: 699,
+    category: "Electronics",
+    description: "Latest model with advanced camera",
+  },
+  {
+    id: 5,
+    title: "Bicycle",
+    price: 399,
+    category: "Vehicles",
+    description: "Mountain bike with 21-speed gears",
+  },
+  {
+    id: 6,
+    title: "Camera",
+    price: 549,
+    category: "Electronics",
+    description: "Professional DSLR camera",
+  },
+  {
+    id: 7,
+    title: "Watch",
+    price: 249,
+    category: "Accessories",
+    description: "Smartwatch with fitness tracking",
+  },
+  {
+    id: 8,
+    title: "Keyboard",
+    price: 89,
+    category: "Electronics",
+    description: "Mechanical keyboard with RGB lighting",
+  },
 ];
 
 export const SearchApp = () => {
@@ -61,9 +109,7 @@ export const SearchApp = () => {
   };
 
   const handleAddToCart = (product: Product) => {
-    window.dispatchEvent(
-      new CustomEvent("mfe:add", { detail: product })
-    );
+    window.dispatchEvent(new CustomEvent("mfe:add", { detail: product }));
   };
 
   const handleAddToWishlist = (product: Product) => {
@@ -109,12 +155,24 @@ export const SearchApp = () => {
 
             {/* Category Filter */}
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", marginBottom: 8, fontWeight: "bold" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: 8,
+                  fontWeight: "bold",
+                }}
+              >
                 Category
               </label>
               {categories.map((cat) => (
                 <div key={cat} style={{ marginBottom: 8 }}>
-                  <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                  <label
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
+                  >
                     <input
                       type="radio"
                       name="category"
@@ -131,7 +189,13 @@ export const SearchApp = () => {
 
             {/* Price Range */}
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", marginBottom: 8, fontWeight: "bold" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: 8,
+                  fontWeight: "bold",
+                }}
+              >
                 Price Range: ${priceRange[0]} - ${priceRange[1]}
               </label>
               <input
@@ -139,7 +203,9 @@ export const SearchApp = () => {
                 min="0"
                 max="1000"
                 value={priceRange[0]}
-                onChange={(e) => setPriceRange([+e.target.value, priceRange[1]])}
+                onChange={(e) =>
+                  setPriceRange([+e.target.value, priceRange[1]])
+                }
                 style={{ width: "100%", marginBottom: 8 }}
               />
               <input
@@ -147,14 +213,22 @@ export const SearchApp = () => {
                 min="0"
                 max="1000"
                 value={priceRange[1]}
-                onChange={(e) => setPriceRange([priceRange[0], +e.target.value])}
+                onChange={(e) =>
+                  setPriceRange([priceRange[0], +e.target.value])
+                }
                 style={{ width: "100%" }}
               />
             </div>
 
             {/* Sort By */}
             <div>
-              <label style={{ display: "block", marginBottom: 8, fontWeight: "bold" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: 8,
+                  fontWeight: "bold",
+                }}
+              >
                 Sort By
               </label>
               <select
@@ -210,7 +284,14 @@ export const SearchApp = () => {
                   <h3 style={{ margin: "0 0 8px 0", fontSize: 18 }}>
                     {product.title}
                   </h3>
-                  <p style={{ margin: "0 0 8px 0", color: "#666", fontSize: 14, flex: 1 }}>
+                  <p
+                    style={{
+                      margin: "0 0 8px 0",
+                      color: "#666",
+                      fontSize: 14,
+                      flex: 1,
+                    }}
+                  >
                     {product.description}
                   </p>
                   <p
