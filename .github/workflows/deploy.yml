@@ -128,9 +128,30 @@ jobs:
           DISTRIBUTION_ID=$(echo '${{ secrets.CLOUDFRONT_DISTRIBUTION_IDS }}' | jq -r ".\"${MFE_KEY}\"")
           if [ "$DISTRIBUTION_ID" != "null" ] && [ -n "$DISTRIBUTION_ID" ]; then
             echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
-            aws cloudfront create-invalidation \
-              --distribution-id "$DISTRIBUTION_ID" \
-              --paths "/*"
+            
+            # Retry logic for CloudFront rate limiting
+            MAX_RETRIES=5
+            RETRY_COUNT=0
+            RETRY_DELAY=10
+            
+            while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+              if aws cloudfront create-invalidation \
+                --distribution-id "$DISTRIBUTION_ID" \
+                --paths "/*" 2>&1; then
+                echo "✅ CloudFront invalidation successful"
+                break
+              else
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                  echo "⚠️  CloudFront invalidation failed, retrying in ${RETRY_DELAY}s... (attempt $RETRY_COUNT/$MAX_RETRIES)"
+                  sleep $RETRY_DELAY
+                  RETRY_DELAY=$((RETRY_DELAY * 2))  # Exponential backoff
+                else
+                  echo "❌ CloudFront invalidation failed after $MAX_RETRIES attempts"
+                  exit 1
+                fi
+              fi
+            done
           else
             echo "No CloudFront distribution found for ${MFE_KEY}, skipping invalidation"
           fi
