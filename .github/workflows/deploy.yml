@@ -78,7 +78,19 @@ jobs:
       - name: Deploy to S3
         working-directory: ${{ matrix.mfe.name }}
         run: |
-          BUCKET_NAME="${{ secrets.S3_BUCKET_PREFIX }}-${{ matrix.mfe.name }}-prod"
+          # Map MFE names to Terraform bucket names (remove mfe- prefix and use short names)
+          case "${{ matrix.mfe.name }}" in
+            "mfe-store-host") BUCKET_SUFFIX="host" ;;
+            "mfe-products") BUCKET_SUFFIX="products" ;;
+            "mfe-cart") BUCKET_SUFFIX="cart" ;;
+            "mfe-checkout") BUCKET_SUFFIX="checkout" ;;
+            "mfe-auth") BUCKET_SUFFIX="auth" ;;
+            "mfe-search") BUCKET_SUFFIX="search" ;;
+            "mfe-wishlist") BUCKET_SUFFIX="wishlist" ;;
+            "mfe-orders") BUCKET_SUFFIX="orders" ;;
+            "mfe-ui") BUCKET_SUFFIX="ui" ;;
+          esac
+          BUCKET_NAME="${{ secrets.S3_BUCKET_PREFIX }}-${BUCKET_SUFFIX}-prod"
 
           # Sync all files except index.html and remoteEntry.js with cache
           aws s3 sync dist/ "s3://${BUCKET_NAME}" \
@@ -101,17 +113,40 @@ jobs:
 
       - name: Invalidate CloudFront cache
         run: |
-          DISTRIBUTION_ID=$(echo '${{ secrets.CLOUDFRONT_DISTRIBUTION_IDS }}' | jq -r '."${{ matrix.mfe.name }}"')
+          # Map MFE names to short names for CloudFront lookup
+          case "${{ matrix.mfe.name }}" in
+            "mfe-store-host") MFE_KEY="host" ;;
+            "mfe-products") MFE_KEY="products" ;;
+            "mfe-cart") MFE_KEY="cart" ;;
+            "mfe-checkout") MFE_KEY="checkout" ;;
+            "mfe-auth") MFE_KEY="auth" ;;
+            "mfe-search") MFE_KEY="search" ;;
+            "mfe-wishlist") MFE_KEY="wishlist" ;;
+            "mfe-orders") MFE_KEY="orders" ;;
+            "mfe-ui") MFE_KEY="ui" ;;
+          esac
+          DISTRIBUTION_ID=$(echo '${{ secrets.CLOUDFRONT_DISTRIBUTION_IDS }}' | jq -r ".\"${MFE_KEY}\"")
           if [ "$DISTRIBUTION_ID" != "null" ] && [ -n "$DISTRIBUTION_ID" ]; then
             echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
             aws cloudfront create-invalidation \
               --distribution-id "$DISTRIBUTION_ID" \
               --paths "/*"
           else
-            echo "No CloudFront distribution found for ${{ matrix.mfe.name }}, skipping invalidation"
+            echo "No CloudFront distribution found for ${MFE_KEY}, skipping invalidation"
           fi
 
       - name: Deployment status
         run: |
           echo "✅ ${{ matrix.mfe.name }} deployed successfully!"
-          echo "📦 Bucket: ${{ secrets.S3_BUCKET_PREFIX }}-${{ matrix.mfe.name }}-prod"
+          case "${{ matrix.mfe.name }}" in
+            "mfe-store-host") BUCKET_SUFFIX="host" ;;
+            "mfe-products") BUCKET_SUFFIX="products" ;;
+            "mfe-cart") BUCKET_SUFFIX="cart" ;;
+            "mfe-checkout") BUCKET_SUFFIX="checkout" ;;
+            "mfe-auth") BUCKET_SUFFIX="auth" ;;
+            "mfe-search") BUCKET_SUFFIX="search" ;;
+            "mfe-wishlist") BUCKET_SUFFIX="wishlist" ;;
+            "mfe-orders") BUCKET_SUFFIX="orders" ;;
+            "mfe-ui") BUCKET_SUFFIX="ui" ;;
+          esac
+          echo "📦 Bucket: ${{ secrets.S3_BUCKET_PREFIX }}-${BUCKET_SUFFIX}-prod"
